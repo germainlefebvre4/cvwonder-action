@@ -1,0 +1,43 @@
+---
+name: "CV Wonder Action"
+description: "Automate the process of CV creation"
+author: "Germain LEFEBVRE <germain.lefebvre4@gmail.com>"
+
+branding:
+  icon: "file-text"
+  color: "white"
+
+inputs:
+  input:
+    description: 'File path of the CV in YAML format'
+    required: true
+    default: 'cv.yml'
+  theme_url:
+    description: 'Theme of the CV'
+    required: true
+    default: 'https://github.com/germainlefebvre4/cvwonder-theme-basic'
+  output:
+    description: 'Output directory for generated CV'
+    required: true
+    default: 'generated/'
+  format:
+    description: 'Output format of the CV'
+    required: true
+    default: 'pdf'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install CV Wonder
+      shell: bash
+      run: ${GITHUB_ACTION_PATH}/install.sh
+
+
+    - name: Run CV Wonder
+      shell: bash
+      run: |
+        ./cvwonder theme install ${{ inputs.theme_url }}
+        ./cvwonder theme list
+        THEME_NAME=$(./cvwonder theme list | tail -n +2 | head -1 | awk '{print $1}')
+
+        ./cvwonder generate --input=${{ inputs.input }} --output=${{ inputs.output }} --theme=${THEME_NAME} --format=${{ inputs.format }}
