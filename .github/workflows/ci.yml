@@ -1,0 +1,42 @@
+---
+name: CI
+
+on:
+  push:
+  workflow_dispatch:
+
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: cvwonder-action
+
+      - name: Download CV in YAML format
+        shell: bash
+        run: curl -LO https://raw.githubusercontent.com/germainlefebvre4/cvwonder/refs/heads/main/cv.yml
+
+      - name: Run cvwonder-action
+        uses: ./cvwonder-action
+
+#   test-container:
+#     runs-on: ubuntu-latest
+#     container:
+#       image: ghcr.io/actions/actions-runner:latest
+#     steps:
+#       - uses: actions/checkout@v4
+#         with:
+#           path: cvwonder-action
+
+#       - name: Download CV in YAML format
+#         shell: bash
+#         run: curl -LO https://raw.githubusercontent.com/germainlefebvre4/cvwonder/refs/heads/main/cv.yml
+
+#       - name: Run cvwonder-action
+#         uses: ./cvwonder-action
